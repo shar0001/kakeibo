@@ -13,6 +13,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap"
         rel="stylesheet">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <meta name="apple-mobile-web-app-title" content="かけいぼ">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -568,6 +571,16 @@
     <script src="supabase-config.js"></script>
     <script src="supabase-client.js"></script>
     <script src="app.js"></script>
+    <script>
+        // Service Worker 登録 (PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/kakeibo/sw.js')
+                    .then(reg => console.log('[SW] 登録成功:', reg.scope))
+                    .catch(err => console.warn('[SW] 登録失敗:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>
