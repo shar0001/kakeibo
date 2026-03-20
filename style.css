@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* =====================================================
    かけいぼ — style.css
    ===================================================== */
@@ -30,7 +31,7 @@
   --radius-full: 999px;
   --nav-h: 72px;
   --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-  --font: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", "Noto Sans JP", sans-serif;
 }
 
 /* ---- ダークモード ---- */
@@ -64,7 +65,7 @@
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
-  height: 100%;
+  height: 100dvh;
   width: 100%;
 }
 
@@ -72,13 +73,11 @@ body {
   font-family: var(--font);
   background: var(--bg-primary);
   color: var(--text-primary);
-  height: 100%;
+  height: 100svh;
   width: 100%;
   overflow: hidden;
-  position: fixed; /* 全体がスクロールするのを防ぐ */
-  top: 0;
-  left: 0;
-  touch-action: none; /* 外側のバウンスを防ぐ */
+  /* position: fixed; を削除してスクロールを許可 */
+  /* touch-action: none; を削除してスクロールを許可 */
 }
 
 button {
@@ -115,7 +114,7 @@ canvas {
   background: var(--bg-primary);
   /* セーフエリア：iPhoneの時計や下の棒と被らないようにする */
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
+  /* padding-bottom: env(safe-area-inset-bottom); <- Bottom nav handles this now */
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
@@ -128,7 +127,7 @@ canvas {
   top: 0;
   left: 0;
   right: 0;
-  bottom: var(--nav-h); /* ナビバーの分だけ開ける */
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); /* ナビバーの分だけ開ける */
   opacity: 0;
   pointer-events: none;
   overflow: hidden;
@@ -149,10 +148,9 @@ canvas {
   transform: translateX(-40px);
 }
 
-/* INPUT スクリーンは bottom-nav の上にフルで重ねる */
 #screen-input {
   inset: 0;
-  z-index: 100;
+  z-index: 300; /* bottom-nav (200) より前面に */
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -175,7 +173,7 @@ canvas {
 
 .scroll-y {
   padding: 0 16px;
-  padding-bottom: calc(var(--nav-h) + 16px);
+  padding-bottom: 32px; /* Bottom is already offset by nav bar in .screen */
 }
 
 .scroll-y::-webkit-scrollbar {
@@ -205,7 +203,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px; /* 余白を増やして時計との干渉を避ける */
+  padding: calc(12px + env(safe-area-inset-top)) 16px 12px; /* セーフエリアを考慮 */
 }
 
 .user-info {
@@ -265,7 +263,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 12px; /* セーフエリアを考慮 */
 }
 
 .page-title {
@@ -641,7 +639,7 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
+  padding: calc(12px + env(safe-area-inset-top)) 16px 12px; /* 上部セーフエリアを考慮 */
   background: var(--bg-card);
   box-shadow: var(--shadow-sm);
 }
@@ -900,7 +898,8 @@ canvas {
   padding: 8px 16px;
   background: var(--bg-card);
   border-top: 1px solid var(--border);
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  flex-shrink: 0; /* 電卓が潰れないように固定 */
 }
 
 .numpad-grid {
@@ -1597,14 +1596,15 @@ canvas {
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--nav-h);
+  /* height: var(--nav-h);  <- Remove fixed height if needed, but height + padding is safer */
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
   background: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: space-around;
   box-shadow: 0 -1px 0 var(--border), 0 -4px 20px rgba(0, 0, 0, 0.06);
   z-index: 200;
-  padding-bottom: 8px; /* 文字が詰まりすぎないように下に余白 */
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .nav-item {

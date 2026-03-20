@@ -204,13 +204,17 @@ function dbToLocal(row) {
 }
 
 function dbToLocalSettings(row) {
+    const parseSafe = (val) => {
+        if (typeof val === 'object' && val !== null) return val;
+        try { return JSON.parse(val); } catch (e) { return null; }
+    };
     return {
         monthlyBudget: row.monthly_budget,
         weekStart: row.week_start,
         theme: row.theme,
         userName: row.username,
-        expenseCats: row.expense_cats ? JSON.parse(row.expense_cats) : null,
-        incomeCats: row.income_cats ? JSON.parse(row.income_cats) : null,
+        expenseCats: row.expense_cats ? parseSafe(row.expense_cats) : null,
+        incomeCats: row.income_cats ? parseSafe(row.income_cats) : null,
     };
 }
 
