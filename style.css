@@ -8,6 +8,11 @@
 /* =====================================================
    1. CSS 変数 (デザイントークン)
    ===================================================== */
+/* 絵文字を確実にカラー表示するためのフォント指定 */
+.nav-icon, .avatar, .icon-btn, .bi-icon, .cat-card-icon, .txn-icon, .field-icon, .comp-icon, .cat-manager-icon-display, .cat-chip-icon, .emoji-input {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+}
+
 :root {
   --bg-primary: #F0F4F8;
   --bg-card: #FFFFFF;
@@ -149,8 +154,11 @@ canvas {
 }
 
 #screen-input {
-  inset: 0;
-  z-index: 300; /* bottom-nav (200) より前面に */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; /* inset: 0; の代わり(古い端末対応) */
+  z-index: 9999; /* bottom-nav (200) より確実に前面に */
   transform: translateY(100%);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
