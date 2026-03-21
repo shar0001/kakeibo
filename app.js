@@ -311,6 +311,14 @@ function navigateTo(screenId, fromFab = false) {
         return;
     }
 
+    // 電卓画面が開いている状態で他の画面へ遷移する場合は電卓を閉じる
+    if (screenId !== 'input') {
+        const inputScreen = document.getElementById('screen-input');
+        if (inputScreen && inputScreen.classList.contains('active')) {
+            closeInputScreen();
+        }
+    }
+
     if (prev) {
         prev.classList.add('slide-out');
         setTimeout(() => prev.classList.remove('slide-out', 'active'), 300);
@@ -530,10 +538,6 @@ function updateAmountDisplay() {
 function handleNumpad(val) {
     if (val === 'del') {
         state.inputAmount = state.inputAmount.slice(0, -1);
-    } else if (val === '.') {
-        if (!state.inputAmount.includes('.')) {
-            state.inputAmount = state.inputAmount ? state.inputAmount + '.' : '0.';
-        }
     } else {
         if (state.inputAmount === '0') state.inputAmount = '';
         state.inputAmount += val;
