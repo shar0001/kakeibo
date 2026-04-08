@@ -114,8 +114,8 @@ async function loadFromSupabase() {
             saveSettings();
         }
 
-        // 取引をマージ (一致 id があれば上書き)
-        const local = state.transactions.filter(t => t.id.startsWith('sample_') || t.id.startsWith('txn_'));
+        // 取引をマージ (一致 id があれば上書き。サンプルデータはマージしない)
+        const local = state.transactions.filter(t => t.id.startsWith('txn_'));
         const merged = [...txns];
         // ローカルの未同期分を追加
         local.forEach(lt => {
@@ -319,7 +319,7 @@ function navigateTo(screenId, fromFab = false) {
         }
     }
 
-    if (prev) {
+    if (prev && prev !== next) {
         prev.classList.add('slide-out');
         setTimeout(() => prev.classList.remove('slide-out', 'active'), 300);
     }
@@ -1432,6 +1432,9 @@ async function startApp() {
     state.repMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     document.getElementById('input-date').value = todayStr();
     showApp();
+    // navigateTo('home') は state.currentScreen が既に 'home' だとスキップされるため、
+    // 初回起動時にデータが表示されない問題を回避するためリセットしてから遷移する
+    state.currentScreen = '';
     navigateTo('home');
 }
 
