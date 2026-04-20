@@ -1382,7 +1382,6 @@ function bindAuthEvents() {
     offlineBtn.addEventListener('click', async () => {
         state.offlineMode = true;
         loadData();
-        if (state.transactions.length === 0) generateSampleData();
         await startApp();
     });
 
@@ -1501,7 +1500,6 @@ async function init() {
         // ユーザーが明示的にログインしたい場合のみ認証画面へ
         state.offlineMode = true;
         loadData();
-        if (state.transactions.length === 0) generateSampleData();
         await startApp();
     }
 

@@ -2,5 +2,15 @@
   "appId": "com.shar.kakeibo",
   "appName": "かけいぼ",
   "webDir": "www",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "server": {
+    "iosScheme": "capacitor",
+    "allowNavigation": ["*"]
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "allowsLinkPreview": true,
+    "scrollEnabled": true,
+    "webContentsDebuggingEnabled": true
+  }
 }
