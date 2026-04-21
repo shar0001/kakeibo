@@ -1110,25 +1110,6 @@ function applyTheme() {
 }
 
 // =====================================================
-// 15. エクスポート
-// =====================================================
-function exportData() {
-    const data = {
-        exportedAt: new Date().toISOString(),
-        transactions: state.transactions,
-        settings: { ...state.settings },
-    };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `kakeibo_${formatDate(new Date())}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    showToast('📥 エクスポートしました');
-}
-
-// =====================================================
 // 16. イベント登録
 // =====================================================
 function bindEvents() {
@@ -1278,9 +1259,6 @@ function bindEvents() {
         renderSettings();
         showToast('データをリセットしました');
     });
-
-    // --- エクスポート ---
-    document.getElementById('btn-export-json').addEventListener('click', exportData);
 
     // --- ログアウト ---
     document.getElementById('btn-logout').addEventListener('click', async () => {
@@ -1480,7 +1458,7 @@ async function init() {
 
     // 認証状態確認
     let session = null;
-    if (typeof supabase !== 'undefined') {
+    if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED && typeof supabase !== 'undefined') {
         try {
             session = await SbAuth.getSession();
         } catch (e) {
@@ -1496,24 +1474,24 @@ async function init() {
         state.currentUser = session.user;
         await onLogin();
     } else {
-        // デフォルトでアプリを表示（オフラインモード）
-        // ユーザーが明示的にログインしたい場合のみ認証画面へ
         state.offlineMode = true;
         loadData();
         await startApp();
     }
 
-    // 認証状態変化リスナー
-    SbAuth.onAuthStateChange(async (event, newSession) => {
-        if (event === 'SIGNED_IN' && newSession && !state.currentUser) {
-            state.currentUser = newSession.user;
-            await onLogin();
-        }
-        if (event === 'SIGNED_OUT') {
-            state.currentUser = null;
-            showAuthScreen();
-        }
-    });
+    // 認証状態変化リスナー（Supabase有効時のみ）
+    if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED) {
+        SbAuth.onAuthStateChange(async (event, newSession) => {
+            if (event === 'SIGNED_IN' && newSession && !state.currentUser) {
+                state.currentUser = newSession.user;
+                await onLogin();
+            }
+            if (event === 'SIGNED_OUT') {
+                state.currentUser = null;
+                showAuthScreen();
+            }
+        });
+    }
 }
 
 // DOM ready

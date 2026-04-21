@@ -299,7 +299,6 @@
             <div class="screen-inner scroll-y">
                 <header class="page-header">
                     <h1 class="page-title">レポート</h1>
-                    <button class="icon-btn" id="btn-report-share" aria-label="共有">📤</button>
                 </header>
 
                 <!-- Month Nav -->
@@ -456,9 +455,6 @@
                         </div>
                         <span class="sync-badge" id="set-sync-badge">&#9729;&#65039; 同期済み</span>
                     </div>
-                    <button class="settings-row-btn" id="btn-export-json">
-                        <span>⬇️ データのエクスポート (JSON)</span><span class="row-arrow">›</span>
-                    </button>
                     <button class="settings-row-btn danger" id="btn-reset-data">
                         <span>🗑️ 全データをリセット</span><span class="row-arrow">›</span>
                     </button>
@@ -573,12 +569,12 @@
 
     </div><!-- /app -->
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    <script src="supabase-config.js"></script>
-    <script src="supabase-client.js"></script>
-    <script src="app.js"></script>
-    <script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" charset="utf-8"></script>
+    <script src="supabase-config.js" charset="utf-8"></script>
+    <script src="supabase-client.js" charset="utf-8"></script>
+    <script src="app.js" charset="utf-8"></script>
+    <script charset="utf-8">
         // Service Worker 登録 (PWA)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
