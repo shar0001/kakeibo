@@ -1278,6 +1278,20 @@ function bindEvents() {
         }
     });
 
+    // --- ヘルプ ---
+    const closeHelp = () => {
+        closeModal('modal-help');
+        if (!state.settings.helpShown) {
+            state.settings.helpShown = true;
+            saveSettings();
+        }
+    };
+    document.getElementById('btn-notif').addEventListener('click', () => openModal('modal-help'));
+    document.getElementById('btn-history-notif').addEventListener('click', () => openModal('modal-help'));
+    document.getElementById('btn-show-help').addEventListener('click', () => openModal('modal-help'));
+    document.getElementById('btn-help-close').addEventListener('click', closeHelp);
+    document.getElementById('btn-help-ok').addEventListener('click', closeHelp);
+
     // モーダル背景クリックで閉じる
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', (e) => {
@@ -1413,6 +1427,10 @@ async function startApp() {
     // 初回起動時にデータが表示されない問題を回避するためリセットしてから遷移する
     state.currentScreen = '';
     navigateTo('home');
+
+    if (!state.settings.helpShown) {
+        setTimeout(() => openModal('modal-help'), 400);
+    }
 }
 
 function renderFilterChips() {

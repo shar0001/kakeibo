@@ -2287,3 +2287,46 @@ canvas {
     opacity: 0.5
   }
 }
+
+/* =====================================================
+   ヘルプモーダル
+   ===================================================== */
+.help-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.help-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.help-item-icon {
+  font-size: 22px;
+  width: 36px;
+  height: 36px;
+  background: var(--bg-input);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: 'Apple Color Emoji', sans-serif;
+}
+
+.help-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.help-item-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}

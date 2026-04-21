@@ -83,8 +83,8 @@
                             <p class="greeting-name" id="home-username">ユーザーさん</p>
                         </div>
                     </div>
-                    <button class="icon-btn" id="btn-notif" aria-label="通知">
-                        <span class="icon">🔔</span>
+                    <button class="icon-btn" id="btn-notif" aria-label="使い方">
+                        <span class="icon">💡</span>
                     </button>
                 </header>
 
@@ -240,7 +240,7 @@
             <div class="screen-inner scroll-y">
                 <header class="page-header">
                     <h1 class="page-title">取引履歴</h1>
-                    <button class="icon-btn" id="btn-history-notif" aria-label="通知">🔔</button>
+                    <button class="icon-btn" id="btn-history-notif" aria-label="使い方">💡</button>
                 </header>
 
                 <!-- Month Nav -->
@@ -455,6 +455,9 @@
                         </div>
                         <span class="sync-badge" id="set-sync-badge">&#9729;&#65039; 同期済み</span>
                     </div>
+                    <button class="settings-row-btn" id="btn-show-help">
+                        <span>💡 使い方を見る</span><span class="row-arrow">›</span>
+                    </button>
                     <button class="settings-row-btn danger" id="btn-reset-data">
                         <span>🗑️ 全データをリセット</span><span class="row-arrow">›</span>
                     </button>
@@ -530,6 +533,47 @@
                     <button class="modal-cancel-btn" id="btn-delete-cancel">キャンセル</button>
                     <button class="modal-ok-btn danger" id="btn-delete-ok">削除</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Help Modal -->
+        <div class="modal-overlay" id="modal-help">
+            <div class="modal-card">
+                <div class="modal-header-row">
+                    <h2 class="modal-title">💡 使い方</h2>
+                    <button class="modal-close-btn" id="btn-help-close">✕</button>
+                </div>
+                <ul class="help-list">
+                    <li class="help-item">
+                        <span class="help-item-icon">➕</span>
+                        <div>
+                            <p class="help-item-title">収支を記録する</p>
+                            <p class="help-item-desc">画面下の ＋ ボタンから支出・収入を入力できます</p>
+                        </div>
+                    </li>
+                    <li class="help-item">
+                        <span class="help-item-icon">🏠</span>
+                        <div>
+                            <p class="help-item-title">今月の残予算を確認</p>
+                            <p class="help-item-desc">ホーム画面のドーナツグラフで予算の使用状況がわかります</p>
+                        </div>
+                    </li>
+                    <li class="help-item">
+                        <span class="help-item-icon">📋</span>
+                        <div>
+                            <p class="help-item-title">履歴・レポートで振り返り</p>
+                            <p class="help-item-desc">下のナビから「履歴」「レポート」で詳細を確認できます</p>
+                        </div>
+                    </li>
+                    <li class="help-item">
+                        <span class="help-item-icon">⚙️</span>
+                        <div>
+                            <p class="help-item-title">予算・カテゴリを設定</p>
+                            <p class="help-item-desc">「設定」から月間予算やカテゴリをカスタマイズできます</p>
+                        </div>
+                    </li>
+                </ul>
+                <button class="modal-ok-btn" id="btn-help-ok" style="margin-top:8px;">はじめる</button>
             </div>
         </div>
 
