@@ -560,7 +560,7 @@ async function saveTransaction() {
     showToast(isEdit ? '✅ 更新しました！' : '✅ 保存しました！');
     closeInputScreen();
     setTimeout(() => {
-        if (state.currentScreen === 'hist') renderHistory();
+        if (state.currentScreen === 'history') renderHistory();
         else renderHome();
     }, 350);
 }
