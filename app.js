@@ -1090,7 +1090,14 @@ function bindEvents() {
 
     // --- BottomNav ---
     document.querySelectorAll('.nav-item[data-screen]').forEach(btn => {
-        btn.addEventListener('click', () => navigateTo(btn.dataset.screen));
+        btn.addEventListener('click', () => {
+            // ボトムナビから履歴画面に飛ぶときは検索バーをクリアする
+            if (btn.dataset.screen === 'history') {
+                const searchInput = document.getElementById('hist-search');
+                if (searchInput) searchInput.value = '';
+            }
+            navigateTo(btn.dataset.screen);
+        });
     });
     document.getElementById('nav-fab').addEventListener('click', () => navigateTo('input'));
 
@@ -1103,8 +1110,16 @@ function bindEvents() {
         state.homeMonth = new Date(state.homeMonth.getFullYear(), state.homeMonth.getMonth() + 1, 1);
         renderHome();
     });
-    document.getElementById('btn-home-history').addEventListener('click', () => navigateTo('history'));
-    document.getElementById('btn-home-all-cat').addEventListener('click', () => navigateTo('history'));
+    document.getElementById('btn-home-history').addEventListener('click', () => {
+        const searchInput = document.getElementById('hist-search');
+        if (searchInput) searchInput.value = '';
+        navigateTo('history');
+    });
+    document.getElementById('btn-home-all-cat').addEventListener('click', () => {
+        const searchInput = document.getElementById('hist-search');
+        if (searchInput) searchInput.value = '';
+        navigateTo('history');
+    });
 
     // --- 入力 ---
     document.getElementById('btn-input-cancel').addEventListener('click', closeInputScreen);
