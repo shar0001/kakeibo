@@ -417,7 +417,6 @@ function renderHomeRecentList(txns) {
 // =====================================================
 function resetInputForm(txn = null) {
     state.inputAmount = '';
-    state.inputCatId = null;
 
     updateAmountDisplay();
 
@@ -443,6 +442,11 @@ function setInputType(type) {
     state.inputType = type;
     document.getElementById('toggle-expense').classList.toggle('active', type === 'expense');
     document.getElementById('toggle-income').classList.toggle('active', type === 'income');
+    // タイプ切り替え時に、自動的に最初のカテゴリを選択状態にする
+    const cats = type === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
+    if (!state.inputCatId || !cats.find(c => c.id === state.inputCatId)) {
+        state.inputCatId = cats.length > 0 ? cats[0].id : null;
+    }
     renderCatGrid();
 }
 
@@ -1022,13 +1026,15 @@ function renderCatManagerList() {
     `;
         item.querySelector('.cat-manager-del-btn').addEventListener('click', () => {
             if (cats.length <= 1) { showToast('カテゴリは1つ以上必要です'); return; }
-            const arr = state.catManagerType === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
-            const idx = arr.findIndex(c => c.id === cat.id);
-            if (idx >= 0) arr.splice(idx, 1);
-            saveSettings();
-            renderCatManagerList();
-            renderSettings();
-            showToast('カテゴリを削除しました');
+            if (confirm(`本当にカテゴリ「${cat.name}」を削除しますか？\n（過去の記録からカテゴリ名は消えませんが、今後このカテゴリは使えなくなります）`)) {
+                const arr = state.catManagerType === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
+                const idx = arr.findIndex(c => c.id === cat.id);
+                if (idx >= 0) arr.splice(idx, 1);
+                saveSettings();
+                renderCatManagerList();
+                renderSettings();
+                showToast('カテゴリを削除しました');
+            }
         });
         list.appendChild(item);
     });
