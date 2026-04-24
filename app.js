@@ -75,7 +75,16 @@ function loadData() {
     try {
         const txnRaw = localStorage.getItem(STORAGE_KEY_TXN);
         const setRaw = localStorage.getItem(STORAGE_KEY_SETTINGS);
-        if (txnRaw) state.transactions = JSON.parse(txnRaw);
+        if (txnRaw) {
+            let txns = JSON.parse(txnRaw);
+            // 過去のサンプルデータが残っている場合は除去する
+            const originalLength = txns.length;
+            txns = txns.filter(t => !t.id.startsWith('sample_'));
+            state.transactions = txns;
+            if (txns.length !== originalLength) {
+                saveTransactions(); // クリーニング済みの状態を保存
+            }
+        }
         if (setRaw) {
             const s = JSON.parse(setRaw);
             state.settings = { ...state.settings, ...s };
@@ -141,76 +150,7 @@ function setSyncBadge(status) {
     else { badge.textContent = '☁️ 同期済み'; }
 }
 
-// =====================================================
-// 4. サンプルデータ (初回起動時)
-// =====================================================
-function generateSampleData() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
-    const txns = [];
-
-    const expenseSets = [
-        { name: 'スーパー', cat: 'food', icon: '🍔', amounts: [3200, 5800, 2400, 8900, 4100, 6700, 3300] },
-        { name: '電車代', cat: 'transport', icon: '🚌', amounts: [230, 460, 690, 230, 1150] },
-        { name: 'カフェ', cat: 'dining', icon: '🍽️', amounts: [650, 980, 540, 1200, 780] },
-        { name: 'Amazon', cat: 'grocery', icon: '🛒', amounts: [2980, 4500, 1800] },
-        { name: '電気代', cat: 'utility', icon: '💡', amounts: [8400] },
-        { name: 'ランチ', cat: 'dining', icon: '🍽️', amounts: [880, 750, 920, 650, 1100, 800] },
-        { name: 'ドラッグストア', cat: 'grocery', icon: '🛒', amounts: [1350, 2100] },
-        { name: 'Spotify', cat: 'entertain', icon: '🎮', amounts: [980] },
-        { name: 'Netflix', cat: 'entertain', icon: '🎮', amounts: [1490] },
-        { name: '携帯代', cat: 'telecom', icon: '📱', amounts: [3850] },
-    ];
-    const incomeSets = [
-        { name: '給与', cat: 'salary', icon: '💰', amounts: [280000] },
-        { name: '副業', cat: 'side', icon: '📈', amounts: [25000, 30000] },
-    ];
-
-    for (let m = -2; m <= 0; m++) {
-        // 支出
-        expenseSets.forEach(es => {
-            es.amounts.forEach((amt, i) => {
-                const day = ((i * 7) % 28) + 1;
-                const date = new Date(year, month + m, day);
-                if (date > now) return;
-                txns.push({
-                    id: `sample_${Date.now()}_${Math.random()}`,
-                    type: 'expense',
-                    amount: amt,
-                    category: es.cat,
-                    categoryName: getCatName(es.cat, 'expense'),
-                    categoryIcon: es.icon,
-                    date: formatDate(date),
-                    memo: '',
-                    createdAt: date.toISOString(),
-                });
-            });
-        });
-        // 収入
-        incomeSets.forEach(is => {
-            is.amounts.forEach((amt, i) => {
-                const day = i === 0 ? 25 : 15;
-                const date = new Date(year, month + m, day);
-                if (date > now) return;
-                txns.push({
-                    id: `sample_in_${Date.now()}_${Math.random()}`,
-                    type: 'income',
-                    amount: amt,
-                    category: is.cat,
-                    categoryName: getCatName(is.cat, 'income'),
-                    categoryIcon: is.icon,
-                    date: formatDate(date),
-                    memo: '',
-                    createdAt: date.toISOString(),
-                });
-            });
-        });
-    }
-
-    state.transactions = txns;
-    saveTransactions();
-}
+// (サンプルデータの自動生成は廃止されました)
 
 function getCatName(id, type) {
     const cats = type === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;

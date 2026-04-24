@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/pm/projects\" \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/pm/tickets\")",
+      "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/engineering/docs\" \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/engineering/debug-log\")",
+      "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/research/topics\")",
+      "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/marketing/content-plan\" \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/marketing/campaigns\")",
+      "Bash(cat)"
+    ]
+  }
+}
