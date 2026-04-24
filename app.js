@@ -59,6 +59,7 @@ let state = {
     inputCatId: null,
     pendingDeleteId: null,
     catManagerType: 'expense',
+    editingTxnId: null,
     offlineMode: false,   // Supabase未使用時
     currentUser: null,    // Supabase User
 };
@@ -423,6 +424,7 @@ function resetInputForm(txn = null) {
     const today = todayStr();
     document.getElementById('input-date').value = txn ? txn.date : today;
     document.getElementById('input-memo').value = txn ? txn.memo : '';
+    state.editingTxnId = txn ? txn.id : null;
 
     // タイプ切り替え
     const type = txn ? txn.type : 'expense';
@@ -509,8 +511,11 @@ async function saveTransaction() {
     const cats = state.inputType === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
     const cat = cats.find(c => c.id === state.inputCatId) || cats[0];
 
+    const isEdit = !!state.editingTxnId;
+    const existingTxn = isEdit ? state.transactions.find(t => t.id === state.editingTxnId) : null;
+
     const txn = {
-        id: `txn_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        id: isEdit ? state.editingTxnId : `txn_${Date.now()}_${Math.random().toString(36).slice(2)}`,
         type: state.inputType,
         amount,
         category: cat.id,
@@ -518,7 +523,7 @@ async function saveTransaction() {
         categoryIcon: cat.icon,
         date: document.getElementById('input-date').value,
         memo: document.getElementById('input-memo').value.trim(),
-        createdAt: new Date().toISOString(),
+        createdAt: existingTxn ? existingTxn.createdAt : new Date().toISOString(),
     };
 
     // ボタンアニメーション
@@ -543,12 +548,21 @@ async function saveTransaction() {
         OfflineQueue.push({ op: 'insert', txn });
     }
 
-    state.transactions.push(txn);
+    if (isEdit) {
+        state.transactions = state.transactions.map(t => t.id === txn.id ? txn : t);
+    } else {
+        state.transactions.push(txn);
+    }
+
     saveTransactions();
+    state.editingTxnId = null; // リセット
     btn.disabled = false;
-    showToast('✅ 保存しました！');
+    showToast(isEdit ? '✅ 更新しました！' : '✅ 保存しました！');
     closeInputScreen();
-    setTimeout(() => renderHome(), 350);
+    setTimeout(() => {
+        if (state.currentScreen === 'hist') renderHistory();
+        else renderHome();
+    }, 350);
 }
 
 // =====================================================
@@ -636,6 +650,9 @@ function createTxnElement(t, i = 0) {
     </div>
     <p class="txn-amount ${t.type}">${t.type === 'expense' ? '-' : '+'}${formatYen(t.amount)}</p>
   `;
+    item.addEventListener('click', () => {
+        openInputScreen(t);
+    });
     return item;
 }
 
@@ -681,6 +698,12 @@ function createTxnItemWithDelete(t, i = 0) {
         e.stopPropagation();
         state.pendingDeleteId = t.id;
         openModal('modal-delete');
+    });
+
+    wrap.addEventListener('click', (e) => {
+        if (e.target.closest('.delete-slide')) return;
+        if (wrap.classList.contains('show-delete')) return;
+        openInputScreen(t);
     });
 
     return wrap;
