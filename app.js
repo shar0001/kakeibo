@@ -392,6 +392,11 @@ function renderHomeCategoryCards(txns) {
       <p class="cat-card-name">${data.name}</p>
       <p class="cat-card-count">${data.count}件</p>
     `;
+        card.addEventListener('click', () => {
+            const searchInput = document.getElementById('hist-search');
+            if (searchInput) searchInput.value = data.name;
+            navigateTo('history');
+        });
         container.appendChild(card);
     });
 }
