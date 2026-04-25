@@ -58,7 +58,7 @@ let state = {
     inputAmount: '',
     inputCatId: null,
     pendingDeleteId: null,
-    catManagerType: 'expense',
+    pendingDeleteCatId: null,
     editingTxnId: null,
     offlineMode: false,   // Supabase未使用時
     currentUser: null,    // Supabase User
@@ -510,8 +510,8 @@ function handleQuickAdd(val) {
 
 async function saveTransaction() {
     const amount = parseFloat(state.inputAmount) || 0;
-    if (amount <= 0) { showToast('金額を入力してください'); return; }
-    if (!state.inputCatId) { showToast('カテゴリを選択してください'); return; }
+    if (amount <= 0) return;
+    if (!state.inputCatId) return;
 
     const cats = state.inputType === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
     const cat = cats.find(c => c.id === state.inputCatId) || cats[0];
@@ -1054,15 +1054,8 @@ function renderCatManagerList() {
     `;
         item.querySelector('.cat-manager-del-btn').addEventListener('click', () => {
             if (cats.length <= 1) { showToast('カテゴリは1つ以上必要です'); return; }
-            if (confirm(`本当にカテゴリ「${cat.name}」を削除しますか？\n（過去の記録からカテゴリ名は消えませんが、今後このカテゴリは使えなくなります）`)) {
-                const arr = state.catManagerType === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
-                const idx = arr.findIndex(c => c.id === cat.id);
-                if (idx >= 0) arr.splice(idx, 1);
-                saveSettings();
-                renderCatManagerList();
-                renderSettings();
-                showToast('カテゴリを削除しました');
-            }
+            state.pendingDeleteCatId = cat.id;
+            openModal('modal-delete-cat');
         });
         list.appendChild(item);
     });
@@ -1228,6 +1221,26 @@ function bindEvents() {
             state.pendingDeleteId = null;
         }
         closeModal('modal-delete');
+    });
+
+    // --- カテゴリ削除モーダル ---
+    document.getElementById('btn-delete-cat-cancel').addEventListener('click', () => {
+        state.pendingDeleteCatId = null;
+        closeModal('modal-delete-cat');
+    });
+    document.getElementById('btn-delete-cat-ok').addEventListener('click', () => {
+        if (state.pendingDeleteCatId) {
+            const arr = state.catManagerType === 'expense' ? state.settings.expenseCats : state.settings.incomeCats;
+            const idx = arr.findIndex(c => c.id === state.pendingDeleteCatId);
+            if (idx >= 0) arr.splice(idx, 1);
+            saveSettings();
+            renderCatManagerList();
+            renderSettings();
+            showToast('カテゴリを削除しました');
+            state.pendingDeleteCatId = null;
+        }
+        closeModal('modal-delete-cat');
+    });
     });
 
     // --- リセットモーダル ---
