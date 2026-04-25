@@ -1241,7 +1241,6 @@ function bindEvents() {
         }
         closeModal('modal-delete-cat');
     });
-    });
 
     // --- リセットモーダル ---
     document.getElementById('btn-reset-data').addEventListener('click', () => openModal('modal-reset'));
