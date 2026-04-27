@@ -8,7 +8,7 @@
     "allowNavigation": ["*"]
   },
   "ios": {
-    "contentInset": "automatic",
+    "contentInset": "never",
     "allowsLinkPreview": true,
     "scrollEnabled": true,
     "webContentsDebuggingEnabled": true

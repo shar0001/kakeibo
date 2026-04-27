@@ -5,7 +5,8 @@
       "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/engineering/docs\" \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/engineering/debug-log\")",
       "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/research/topics\")",
       "Bash(mkdir -p \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/marketing/content-plan\" \"/Users/shar/Documents/アンチグラビティ/kakeibo/.company/marketing/campaigns\")",
-      "Bash(cat)"
+      "Bash(cat)",
+      "Bash(git -C /Users/shar/Documents/アンチグラビティ/kakeibo status)"
     ]
   }
 }
