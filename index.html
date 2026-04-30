@@ -660,8 +660,17 @@
     </div><!-- /app -->
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" charset="utf-8"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js" charset="utf-8"></script>
     <script src="supabase-config.js" charset="utf-8"></script>
+    <script>
+        // Supabase CDN を SUPABASE_ENABLED の場合のみ動的に読み込む
+        if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED) {
+            var s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+            s.charset = 'utf-8';
+            s.async = false; // 順序を保つ
+            document.head.appendChild(s);
+        }
+    </script>
     <script src="supabase-client.js" charset="utf-8"></script>
     <script src="app.js" charset="utf-8"></script>
     <script charset="utf-8">
@@ -673,6 +682,16 @@
                     .catch(err => console.warn('[SW] 登録失敗:', err));
             });
         }
+
+        // ローディング画面の安全タイムアウト（万が一のフォールバック）
+        setTimeout(() => {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay && !overlay.classList.contains('hidden')) {
+                console.warn('[Safety] ローディングタイムアウト - 強制非表示');
+                overlay.classList.add('hidden');
+                setTimeout(() => overlay.remove(), 500);
+            }
+        }, 8000);
     </script>
 </body>
 

@@ -1575,5 +1575,3 @@ function finishOnboarding() {
     }, 500);
 }
 
-    init();
-}

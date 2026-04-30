@@ -6,15 +6,23 @@
 // =====================================================
 // 1. Supabase クライアント初期化
 // =====================================================
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-    },
-    realtime: { params: { eventsPerSecond: 10 } },
-});
+let sb = null;
+
+if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED && typeof supabase !== 'undefined') {
+    try {
+        const { createClient } = supabase;
+        sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true,
+            },
+            realtime: { params: { eventsPerSecond: 10 } },
+        });
+    } catch (e) {
+        console.warn('[Supabase] 初期化失敗:', e);
+    }
+}
 
 // =====================================================
 // 2. 認証ヘルパー
@@ -22,18 +30,21 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 const SbAuth = {
     /** 現在のセッションを取得 */
     async getSession() {
+        if (!sb) return null;
         const { data } = await sb.auth.getSession();
         return data.session;
     },
 
     /** 現在のユーザーを取得 */
     async getUser() {
+        if (!sb) return null;
         const { data } = await sb.auth.getUser();
         return data.user;
     },
 
     /** 新規登録 */
     async signUp(email, password) {
+        if (!sb) throw new Error('Supabase未接続');
         const { data, error } = await sb.auth.signUp({ email, password });
         if (error) throw error;
         return data;
@@ -41,6 +52,7 @@ const SbAuth = {
 
     /** ログイン */
     async signIn(email, password) {
+        if (!sb) throw new Error('Supabase未接続');
         const { data, error } = await sb.auth.signInWithPassword({ email, password });
         if (error) throw error;
         return data;
@@ -48,12 +60,14 @@ const SbAuth = {
 
     /** ログアウト */
     async signOut() {
+        if (!sb) return;
         const { error } = await sb.auth.signOut();
         if (error) throw error;
     },
 
     /** 認証状態変化リスナー */
     onAuthStateChange(callback) {
+        if (!sb) return { data: { subscription: { unsubscribe: () => {} } } };
         return sb.auth.onAuthStateChange((event, session) => {
             callback(event, session);
         });
@@ -66,6 +80,7 @@ const SbAuth = {
 const SbTransactions = {
     /** 全取引を取得（ログイン中のユーザーのみ） */
     async fetchAll() {
+        if (!sb) return [];
         const { data, error } = await sb
             .from('transactions')
             .select('*')
@@ -76,6 +91,7 @@ const SbTransactions = {
 
     /** 取引を追加 */
     async insert(txn) {
+        if (!sb) return txn;
         const row = localToDb(txn);
         const { data, error } = await sb.from('transactions').insert(row).select().single();
         if (error) throw error;
@@ -84,13 +100,14 @@ const SbTransactions = {
 
     /** 取引を削除 */
     async delete(id) {
-        // id はローカルのフォーマット（UUID または sample_ prefix）
+        if (!sb) return;
         const { error } = await sb.from('transactions').delete().eq('id', id);
         if (error) throw error;
     },
 
     /** 取引を更新 */
     async update(txn) {
+        if (!sb) return txn;
         const row = localToDb(txn);
         const { data, error } = await sb.from('transactions').update(row).eq('id', txn.id).select().single();
         if (error) throw error;
@@ -104,6 +121,7 @@ const SbTransactions = {
 const SbSettings = {
     /** 設定を取得 */
     async fetch() {
+        if (!sb) return null;
         const { data, error } = await sb.from('user_settings').select('*').maybeSingle();
         if (error) throw error;
         return data ? dbToLocalSettings(data) : null;
@@ -111,6 +129,7 @@ const SbSettings = {
 
     /** 設定を保存（UPSERT） */
     async upsert(settings) {
+        if (!sb) return;
         const user = await SbAuth.getUser();
         if (!user) return;
 
@@ -136,6 +155,7 @@ const SbSettings = {
 let realtimeChannel = null;
 
 function subscribeRealtime(onInsert, onDelete) {
+    if (!sb) return null;
     if (realtimeChannel) {
         sb.removeChannel(realtimeChannel);
     }
@@ -166,6 +186,7 @@ function subscribeRealtime(onInsert, onDelete) {
 }
 
 function unsubscribeRealtime() {
+    if (!sb) return;
     if (realtimeChannel) {
         sb.removeChannel(realtimeChannel);
         realtimeChannel = null;
