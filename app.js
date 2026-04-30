@@ -62,6 +62,7 @@ let state = {
     editingTxnId: null,
     offlineMode: false,   // Supabase未使用時
     currentUser: null,    // Supabase User
+    onboardingStep: 0,
 };
 
 // Chart.js インスタンス
@@ -1429,9 +1430,12 @@ async function startApp() {
     state.currentScreen = '';
     navigateTo('home');
 
-    if (!state.settings.helpShown) {
+    if (!state.settings.helpShown && localStorage.getItem('kakeibo_onboarding_done')) {
         setTimeout(() => openModal('modal-help'), 400);
     }
+
+    // オンボーディングチェック
+    checkOnboarding();
 }
 
 function renderFilterChips() {
@@ -1471,6 +1475,9 @@ async function init() {
     applyTheme();
     bindEvents();
     bindAuthEvents();
+
+    // オンボーディング用リスナー
+    document.getElementById('btn-onboarding-next').addEventListener('click', nextOnboarding);
 
     // ローディングオーバーレイを表示
     const overlay = document.getElementById('loading-overlay');
@@ -1517,5 +1524,56 @@ async function init() {
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
+    init();
+}
+
+// =====================================================
+// 21. オンボーディング
+// =====================================================
+function checkOnboarding() {
+    const isDone = localStorage.getItem('kakeibo_onboarding_done');
+    if (!isDone) {
+        document.getElementById('onboarding-screen').style.display = 'flex';
+        state.onboardingStep = 0;
+        updateOnboardingUI();
+    }
+}
+
+function updateOnboardingUI() {
+    const slides = document.querySelectorAll('.onboarding-slide');
+    const dots = document.querySelectorAll('.onboarding-dots .dot');
+    const nextBtn = document.getElementById('btn-onboarding-next');
+
+    slides.forEach((s, i) => s.classList.toggle('active', i === state.onboardingStep));
+    dots.forEach((d, i) => d.classList.toggle('active', i === state.onboardingStep));
+
+    if (state.onboardingStep === slides.length - 1) {
+        nextBtn.textContent = 'はじめる';
+    } else {
+        nextBtn.textContent = '次へ';
+    }
+}
+
+function nextOnboarding() {
+    const slides = document.querySelectorAll('.onboarding-slide');
+    if (state.onboardingStep < slides.length - 1) {
+        state.onboardingStep++;
+        updateOnboardingUI();
+    } else {
+        finishOnboarding();
+    }
+}
+
+function finishOnboarding() {
+    const screen = document.getElementById('onboarding-screen');
+    screen.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    screen.style.opacity = '0';
+    screen.style.transform = 'scale(1.1)';
+    setTimeout(() => {
+        screen.style.display = 'none';
+        localStorage.setItem('kakeibo_onboarding_done', 'true');
+    }, 500);
+}
+
     init();
 }
