@@ -323,17 +323,35 @@ function renderHome() {
     const expEl = document.getElementById('home-expense');
     countUpAnimation(expEl, expense, 700, '-¥');
 
-    // ステータスバッジ
-    const badge = document.getElementById('home-status-badge');
-    badge.textContent = balance >= 0 ? '順調 ✓' : '要注意 ⚠️';
-    badge.style.background = balance >= 0 ? 'var(--accent-light)' : '#FEE2E2';
-    badge.style.color = balance >= 0 ? 'var(--accent)' : 'var(--accent-red)';
-
     // 予算ドーナツ
     const budget = state.settings.monthlyBudget;
     const used = expense;
     const remaining = Math.max(0, budget - used);
     const pct = budget > 0 ? Math.min(used / budget, 1) : 0;
+
+    // ステータスバッジ（予算使用率ベース）
+    const badge = document.getElementById('home-status-badge');
+    if (budget > 0) {
+        const usagePct = used / budget;
+        if (usagePct > 0.7) {
+            badge.textContent = '要注意 ⚠️';
+            badge.style.background = '#FEE2E2';
+            badge.style.color = 'var(--accent-red)';
+        } else if (usagePct <= 0.3) {
+            badge.textContent = '順調 ✓';
+            badge.style.background = 'var(--accent-light)';
+            badge.style.color = 'var(--accent)';
+        } else {
+            badge.textContent = '普通';
+            badge.style.background = 'var(--bg-input)';
+            badge.style.color = 'var(--text-secondary)';
+        }
+    } else {
+        // 予算未設定時は残高で判定
+        badge.textContent = balance >= 0 ? '順調 ✓' : '要注意 ⚠️';
+        badge.style.background = balance >= 0 ? 'var(--accent-light)' : '#FEE2E2';
+        badge.style.color = balance >= 0 ? 'var(--accent)' : 'var(--accent-red)';
+    }
 
     document.getElementById('budget-remaining').textContent = formatYen(remaining);
     document.getElementById('budget-limit-text').textContent = `残り / 限度額 ${formatYen(budget)}`;
