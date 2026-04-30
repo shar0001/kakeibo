@@ -169,11 +169,14 @@ canvas {
   opacity: 1;
   pointer-events: auto;
   transform: translate3d(0, 0, 0) scale(1);
+  z-index: 2;
 }
 
-.screen.slide-out {
+.screen.exiting {
   opacity: 0;
-  transform: translate3d(-20px, 0, 0) scale(1.02);
+  pointer-events: none;
+  transform: translate3d(-20px, 0, 0) scale(0.98);
+  z-index: 1;
 }
 
 #screen-input {
@@ -183,9 +186,10 @@ canvas {
   bottom: calc(var(--nav-h) + env(safe-area-inset-bottom)); /* ナビバーと被らないように修正 */
   z-index: 9999; /* bottom-nav (200) より確実に前面に */
   transform: translate3d(0, 100%, 0);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  will-change: transform;
 }
 
 #screen-input.active {
@@ -195,6 +199,7 @@ canvas {
 
 #screen-input.slide-out {
   transform: translate3d(0, 100%, 0);
+  transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .screen-inner {

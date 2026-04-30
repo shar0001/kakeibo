@@ -261,13 +261,15 @@ function navigateTo(screenId, fromFab = false) {
         }
     }
 
+    // 前の画面を即座に非アクティブにし、フェードアウトクラスで退場させる
     if (prev && prev !== next) {
-        prev.classList.add('slide-out');
-        setTimeout(() => prev.classList.remove('slide-out', 'active'), 300);
+        prev.classList.remove('active');
+        prev.classList.add('exiting');
+        setTimeout(() => prev.classList.remove('exiting'), 400);
     }
 
     next.classList.add('active');
-    next.classList.remove('slide-out');
+    next.classList.remove('exiting');
 
     // ナビ更新
     document.querySelectorAll('.nav-item').forEach(btn => {
@@ -289,10 +291,13 @@ function openInputScreen(txn = null) {
     resetInputForm(txn);
 }
 
-function closeInputScreen() {
+function closeInputScreen(onComplete) {
     const screen = document.getElementById('screen-input');
     screen.classList.add('slide-out');
-    setTimeout(() => screen.classList.remove('active', 'slide-out'), 350);
+    setTimeout(() => {
+        screen.classList.remove('active', 'slide-out');
+        if (onComplete) onComplete();
+    }, 380);
 }
 
 // =====================================================
@@ -564,11 +569,13 @@ async function saveTransaction() {
     state.editingTxnId = null; // リセット
     btn.disabled = false;
     showToast(isEdit ? '✅ 更新しました！' : '✅ 保存しました！');
-    closeInputScreen();
-    setTimeout(() => {
-        if (state.currentScreen === 'history') renderHistory();
-        else renderHome();
-    }, 350);
+    closeInputScreen(() => {
+        // アニメーション完了後にレンダリング（カクつき防止）
+        requestAnimationFrame(() => {
+            if (state.currentScreen === 'history') renderHistory();
+            else renderHome();
+        });
+    });
 }
 
 // =====================================================
