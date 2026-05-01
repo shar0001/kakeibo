@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    { "source": "/support", "destination": "/support.html" },
+    { "source": "/privacy", "destination": "/privacy.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" }
+      ]
+    }
+  ]
+}
