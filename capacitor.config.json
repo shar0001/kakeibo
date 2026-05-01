@@ -11,6 +11,6 @@
     "contentInset": "never",
     "allowsLinkPreview": true,
     "scrollEnabled": true,
-    "webContentsDebuggingEnabled": true
+    "webContentsDebuggingEnabled": false
   }
 }
